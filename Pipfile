@@ -6,8 +6,9 @@ name = "pypi"
 [packages]
 flask = "*"
 pandas = "*"
-pymongo = "*"
+pymongo = {extras = ["tls"], version = "*"}
 python-dotenv = "*"
+dnspython = "*"
 
 [dev-packages]
 
