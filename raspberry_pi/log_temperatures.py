@@ -12,8 +12,7 @@ import requests
 DB_URI = os.environ.get("DB_URI")
 LAT = os.environ.get("LATITUDE")
 LON = os.environ.get("LONGITUDE")
-client = MongoClient(DB_URI)
-db = client.babytempdb
+
 
 def get_room_temp():
     i2c = busio.I2C(board.SCL, board.SDA)

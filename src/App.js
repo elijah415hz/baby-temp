@@ -1,22 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
+
+function getTemps() {
+  fetch(`https://cq661ei9wa.execute-api.us-west-2.amazonaws.com/authFree/helloWorld`, {
+    method: 'GET'
+}).then(res => res.json()).then(data => console.log(data.body))
+}
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        
+        <button onClick={getTemps}>Temps!</button>
       </header>
     </div>
   );
