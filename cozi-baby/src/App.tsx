@@ -1,24 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 
+export interface DataType {
+  timestamp: string,
+  outside_temp: number,
+  room_temp: number
+}[]
+
+
 function App() {
+  async function getTemps(): Promise<void> {
+    let res = await fetch(`https://cq661ei9wa.execute-api.us-west-2.amazonaws.com/authFree/helloWorld`, {
+      method: 'GET'
+    })
+    let json = await res.json()
+    console.log(json.body)
+    setData(json.body)
+  }
+  let [data, setData] = useState<DataType>({
+    timestamp: "",
+    outside_temp: 0,
+    room_temp: 0
+  })
+
+  useEffect(() => {
+    setInterval(getTemps, 600000)
+  }
+  , [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header>
+        <h1>CozyBaby</h1>
       </header>
+      <body className="App-body">
+        <button onClick={getTemps}>Temps!</button>
+      </body>
     </div>
   );
 }
