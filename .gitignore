@@ -237,3 +237,6 @@ dist
 package/
 *.zip
 
+
+# Local Netlify folder
+.netlify
