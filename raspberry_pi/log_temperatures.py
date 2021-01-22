@@ -38,6 +38,4 @@ def upload_to_db(timestamp, room_temp, outside_temp):
         db.temperatures.insert_one({"timestamp": timestamp, "room_temp": room_temp, "outside_temp": outside_temp})
     return
 
-while True:
-    upload_to_db(datetime.now(), get_room_temp(), get_outside_temp())
-    time.sleep(600)
+upload_to_db(datetime.now(), get_room_temp(), get_outside_temp())
