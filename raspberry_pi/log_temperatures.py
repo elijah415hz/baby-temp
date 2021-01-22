@@ -1,6 +1,3 @@
-# Make sure to locally run the below shell command to install library
-# sudo pip3 install adafruit-circuitpython-pct2075
-
 from pymongo import MongoClient
 from datetime import datetime
 from dotenv import load_dotenv
@@ -21,7 +18,7 @@ def get_room_temp():
     i2c = busio.I2C(board.SCL, board.SDA)
     pct = adafruit_pct2075.PCT2075(i2c)
     celcius = pct.temperature
-    farenheit = (celcius * (9/5)) + 32 
+    farenheit = (celcius * 1.8) + 32 
     return farenheit
     
 def get_outside_temp():
