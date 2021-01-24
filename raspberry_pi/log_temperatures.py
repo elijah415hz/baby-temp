@@ -21,7 +21,7 @@ def get_room_temp():
     i2c = busio.I2C(board.SCL, board.SDA)
     pct = adafruit_pct2075.PCT2075(i2c)
     celcius = pct.temperature
-    farenheit = (celcius * (9/5)) + 32 
+    farenheit = (celcius * 1.8) + 32 
     return farenheit
     
 def get_outside_temp():
