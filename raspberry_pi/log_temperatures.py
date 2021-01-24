@@ -1,6 +1,3 @@
-# Make sure to locally run the below shell command to install library
-# sudo pip3 install adafruit-circuitpython-pct2075
-
 from pymongo import MongoClient
 from datetime import datetime
 from dotenv import load_dotenv
