@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import './App.css';
 import MyChart from './components/Chart'
 
@@ -14,8 +14,15 @@ export interface ChartJSDataType {
     label: string,
     data: number[],
     fill: boolean,
-    borderColor: string
+    borderColor: string,
+    pointRadius: number,
+    borderWidth: number
   }[]
+}
+
+export interface TempHeaderType {
+  inside: number,
+  outside: number
 }
 
 function App() {
@@ -24,9 +31,18 @@ function App() {
       method: 'GET'
     })
     let json = await res.json()
-    console.log(JSON.parse(json.body))
-    setChartData(JSON.parse(json.body))
+    let data: DataType = JSON.parse(json.body)
+    setChartData(data)
+    setTempHeaderState({
+      inside: data.inside[data.inside.length - 1],
+      outside: data.outside[data.inside.length - 1]
+    })
   }
+
+  const [tempHeaderState, setTempHeaderState] = useState({
+    inside: NaN,
+    outside: NaN
+  })
 
   function reducer(state: ChartJSDataType, action: DataType): ChartJSDataType {
     if (action.labels.length) {
@@ -37,13 +53,17 @@ function App() {
             label: "Inside",
             data: action.inside,
             fill: false,
-            borderColor: "blue"
+            borderColor: "blue",
+            pointRadius: 0,
+            borderWidth: 8
           },
           {
             label: "Outside",
             data: action.outside,
             fill: false,
-            borderColor: "green"
+            borderColor: "green",
+            pointRadius: 0,
+            borderWidth: 8
           }
         ]
       }
@@ -58,13 +78,17 @@ function App() {
         label: "Inside",
         data: [],
         fill: false,
-        borderColor: "blue"
+        borderColor: "blue",
+        pointRadius: 0,
+        borderWidth: 8
       },
       {
         label: "Outside",
         data: [],
         fill: false,
-        borderColor: "green"
+        borderColor: "green",
+        pointRadius: 0,
+        borderWidth: 8
       }
     ]
   })
@@ -72,8 +96,7 @@ function App() {
   useEffect(() => {
     getTemps()
     setInterval(getTemps, 600000)
-  }
-    , [])
+  },[])
 
   return (
     <div className="App">
@@ -81,6 +104,7 @@ function App() {
         <h1>CozyBaby</h1>
       </header>
       <div className="App-body">
+        <h2>Inside: {tempHeaderState.inside.toFixed(1).toString()}° | Outside: {tempHeaderState.outside.toFixed(1).toString()}°</h2>
         <MyChart data={chartData} />
       </div>
     </div>
