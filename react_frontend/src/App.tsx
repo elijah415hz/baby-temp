@@ -2,11 +2,12 @@ import React, { useEffect, useReducer, useState } from 'react';
 import './App.css';
 import MyChart from './components/Chart'
 
-export interface DataType {
-  labels: string[],
-  outside: number[],
-  inside: number[]
+interface DataType {
+  0: string[],
+  1: number[],
+  2: number[]
 }
+
 
 export interface ChartJSDataType {
   labels: string[],
@@ -34,8 +35,8 @@ function App() {
     let data: DataType = JSON.parse(json.body)
     setChartData(data)
     setTempHeaderState({
-      inside: data.inside[data.inside.length - 1],
-      outside: data.outside[data.inside.length - 1]
+      inside: data[1][data[1].length - 1],
+      outside: data[2][data[2].length - 1]
     })
   }
 
@@ -45,13 +46,13 @@ function App() {
   })
 
   function reducer(state: ChartJSDataType, action: DataType): ChartJSDataType {
-    if (action.labels.length) {
+    if (action[0].length) {
       state = {
-        labels: action.labels,
+        labels: action[0],
         datasets: [
           {
             label: "Inside",
-            data: action.inside,
+            data: action[1],
             fill: false,
             borderColor: "blue",
             pointRadius: 0,
@@ -59,7 +60,7 @@ function App() {
           },
           {
             label: "Outside",
-            data: action.outside,
+            data: action[2],
             fill: false,
             borderColor: "green",
             pointRadius: 0,
