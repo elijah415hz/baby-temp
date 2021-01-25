@@ -94,16 +94,20 @@ function App() {
   return (
     <div className="App">
       <h1>CozyBaby</h1>
-      {chartData.labels.length ? (
-        <>
       <hr />
-      <h2 className="inside">Inside: {tempHeaderState.inside.toFixed(1).toString()}°</h2>
-      <h2 className="outside">Outside: {tempHeaderState.outside.toFixed(1).toString()}°</h2>
-      <MyChart data={chartData} />
-      </>
-        ):(
-          <h2>Loading...</h2>
-      )}
+      {chartData.labels.length ? (
+        <div style={{animation: 'fadeIn 1s'}}>
+          <h2 className="inside">Inside: {tempHeaderState.inside.toFixed(1).toString()}°</h2>
+          <h2 className="outside">Outside: {tempHeaderState.outside.toFixed(1).toString()}°</h2>
+          <MyChart data={chartData} />
+        </div>
+      ) : (
+          <div className="spinner">
+            <div className="bounce1"></div>
+            <div className="bounce2"></div>
+            <div className="bounce3"></div>
+          </div>
+        )}
     </div>
   );
 }
