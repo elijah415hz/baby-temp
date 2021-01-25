@@ -1,11 +1,14 @@
 import React from "react";
 import { Container } from '@material-ui/core';
-import { Line } from "react-chartjs-2";
+import { Line, defaults } from "react-chartjs-2";
 import { ChartJSDataType } from "../App"
+
+defaults.global.maintainAspectRatio = false
+
 
 export default function MyChart({ data }: { data: ChartJSDataType }) {
     return (
-        <Container>
+        <div style={{minHeight: "50vh", maxWidth: "1000px", margin: "auto", padding: "10px"}}>
             <Line data={data} options={{
                 legend: false,
                 scales: {
@@ -27,6 +30,6 @@ export default function MyChart({ data }: { data: ChartJSDataType }) {
                     }]
                 }
             }} />
-        </Container>
+        </div>
     );
 }
