@@ -14,11 +14,11 @@ export interface ChartJSDataType {
   datasets: {
     label: string,
     data: number[],
-    fill: boolean,
-    borderColor: string,
-    pointRadius: number,
-    borderWidth: number
-  }[]
+    fill?: boolean,
+    borderColor?: string,
+    pointRadius?: number,
+    borderWidth?: number
+  }[],
 }
 
 export interface TempHeaderType {
@@ -54,19 +54,19 @@ function App() {
             label: "Inside",
             data: action[1],
             fill: false,
-            borderColor: "blue",
-            pointRadius: 0,
-            borderWidth: 8
+            borderColor: "#5c6bc0",
+            pointRadius: 1,
+            borderWidth: 5
           },
           {
             label: "Outside",
             data: action[2],
             fill: false,
-            borderColor: "green",
-            pointRadius: 0,
-            borderWidth: 8
+            borderColor: "#43a047",
+            pointRadius: 1,
+            borderWidth: 5
           }
-        ]
+        ],
       }
     }
     return state
@@ -77,19 +77,11 @@ function App() {
     datasets: [
       {
         label: "Inside",
-        data: [],
-        fill: false,
-        borderColor: "blue",
-        pointRadius: 0,
-        borderWidth: 8
+        data: []
       },
       {
         label: "Outside",
-        data: [],
-        fill: false,
-        borderColor: "green",
-        pointRadius: 0,
-        borderWidth: 8
+        data: []
       }
     ]
   })
@@ -97,17 +89,21 @@ function App() {
   useEffect(() => {
     getTemps()
     setInterval(getTemps, 600000)
-  },[])
+  }, [])
 
   return (
     <div className="App">
-      <header>
-        <h1>CozyBaby</h1>
-      </header>
-      <div className="App-body">
-        <h2>Inside: {tempHeaderState.inside.toFixed(1).toString()}° | Outside: {tempHeaderState.outside.toFixed(1).toString()}°</h2>
-        <MyChart data={chartData} />
-      </div>
+      <h1>CozyBaby</h1>
+      {chartData.labels.length ? (
+        <>
+      <hr />
+      <h2 className="inside">Inside: {tempHeaderState.inside.toFixed(1).toString()}°</h2>
+      <h2 className="outside">Outside: {tempHeaderState.outside.toFixed(1).toString()}°</h2>
+      <MyChart data={chartData} />
+      </>
+        ):(
+          <h2>Loading...</h2>
+      )}
     </div>
   );
 }
