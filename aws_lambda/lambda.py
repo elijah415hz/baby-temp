@@ -1,23 +1,19 @@
 import json
 from pymongo import MongoClient
 import os
+import pandas as pd
 DB_URI = os.environ.get("DB_URI")
 
 def lambda_handler(event, context):
     #
     with MongoClient(DB_URI) as client:
         db = client.babytempdb
-        temperatures = {
-            'labels': [],
-            'inside': [],
-            'outside': []
-            }
-        for temp in db.temperatures.find():
-            temp['timestamp'] = temp['timestamp'].strftime("%-I:%M %p")
-            temperatures['labels'].append(temp['timestamp'])
-            temperatures['inside'].append(temp['room_temp'])
-            temperatures['outside'].append(temp['outside_temp'])
+        mongo_obj = db.temperatures.find()
+        temperatures_df = pd.DataFrame(mongo_obj)
+        temperatures_df['timestamp'] = temperatures_df['timestamp'].dt.strftime("%-I:%M %p")
+        temperatures_df.drop(columns='_id', inplace=True)
+        temperatures_df = temperatures_df.transpose()
     return {
         'statusCode': 200,
-        'body': json.dumps(temperatures)
+        'body': temperatures_df.to_json(orient="values")
     }
