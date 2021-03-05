@@ -6,6 +6,10 @@
   color: #455a64;
 }
 
+#container2 {
+  height: 100vh;
+}
+
 hr {
   height: 2px;
   border: none;

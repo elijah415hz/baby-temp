@@ -3,7 +3,7 @@ import { Container } from '@material-ui/core';
 import { Line, defaults } from "react-chartjs-2";
 import { ChartJSDataType } from "../App"
 
-defaults.global.maintainAspectRatio = false
+defaults.global.maintainAspectRatio = true
 
 
 export default function MyChart({ data }: { data: ChartJSDataType }) {
