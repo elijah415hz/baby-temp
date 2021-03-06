@@ -2,7 +2,7 @@ import React from "react";
 import { Line, defaults } from "react-chartjs-2";
 import { ChartJSDataType } from "../App"
 
-defaults.global.maintainAspectRatio = true
+defaults.global.maintainAspectRatio = false
 
 
 export default function MyChart({ data }: { data: ChartJSDataType }) {
