@@ -1,5 +1,4 @@
 import React from "react";
-import { Container } from '@material-ui/core';
 import { Line, defaults } from "react-chartjs-2";
 import { ChartJSDataType } from "../App"
 
