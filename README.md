@@ -8,7 +8,7 @@ CozyBaby is my custom solution to monitor the temperature in my baby's room. We 
 
 My solution was this app!
 
-The inside temperature is gathered by a RaspberryPi 0W with an AdaFruit temperature sensor that uploads to an Atlas MongoDB instance. That code is found in the "raspberry_pi" folder and on the RaspberryPi is called by cron every hour. The backend is handled by an AWS Lambda function, equipped with two Lambda Layers enabling the use of numpy and pandas. The code for that is found in the "aws_lambda" folder. Finally, the front end is hosted on netlify at https://cozy-baby.netlify.app and the code for that is found in "react_frontend."
+The inside temperature is gathered by a RaspberryPi 0W with an AdaFruit temperature sensor that uploads to an Atlas MongoDB instance. That code is found in the "raspberry_pi" folder and on the RaspberryPi is called by cron every hour. The backend is handled by an AWS Lambda function written in Python. The code for that is found in the "aws_lambda" folder. Finally, the front end is hosted on netlify at https://cozy-baby.netlify.app and the code for that is found in "react_frontend."
 
 This was in concept one of the simpler apps I've created, but allowed me to explore using a RaspberryPi and dive into the world of serverless functions.
 
