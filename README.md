@@ -13,8 +13,10 @@
 
 ## Description
 CozyBaby is my custom solution to monitor the temperature in my baby's room. We live in an old building with manual heat controls, so every night we look at the predicted low temperature for the night, then try to guess what level to set the heaters at and how warmly to dress him. I wanted to see how cold it really is in there, and how much the heat fluctuates based on the outside temperature. I realized that this problem gave me the perfect excuse to buy another Raspberry Pi! (I already have a Zero W that has served as a wireless print server, and is now a BlueTooth receiver for my stereo). 
+
 After some initial research, I settled on using a Raspberry Pi Zero W with an AdaFruit PCT2075 temperature sensor. I don't have a soldering iron, so I went the solder-free route by purchasing a hammer header for the Pi, a STEMMA QT cable, and SparkFun STEMMA QT shim to connect everything together. Every hour, the Raspberry Pi reads the temperature from the sensor, gets the outdoor temperature from Open Weather API, and then uploads both values to an Atlas MongoDB instance. The code for the Raspberry Pi is found in the "raspberry_pi" folder. 
-The backend is handled by an AWS Lambda function, equipped with two Lambda Layers enabling the use of NumPy and Pandas. While it involved a few extra steps, I wanted to include Pandas, as I'll eventually have quite a large amount of data here, and Pandas offers some performance gains when working with large datasets. The code for that is found in the "aws_lambda" folder. 
+
+The backend is handled by an AWS Lambda function written in Python. The code for that is found in the "aws_lambda" folder. 
 Finally, the React front end is hosted on netlify at https://cozy-baby.netlify.app and the code for that is found in "react_frontend."
 
 This was in concept one of the simpler apps I've created, but allowed me to explore using a Raspberry Pi and dive into the world of serverless functions.
@@ -23,7 +25,7 @@ This was in concept one of the simpler apps I've created, but allowed me to expl
 Very simple! Just go to https://cozy-baby.netlify.app and take a look!
 
 ## Stack
-CozyBaby is built with Python, MongoDB, React, Typescript, ChartJS, React-ChartJS-2, AWS Lambda Functions, AWS Lambda Layers, 
+CozyBaby is built with Python, MongoDB, React, Typescript, ChartJS, and AWS Lambda Functions
 
 ## Installation
 Most of the work of getting this app working was in the setup of the Raspberry Pi and the AWS Lambda. Having successfully fumbled my way through it, hopefully the following description can help anyone hoping to replicate this app locally, or set up something similar.
@@ -40,7 +42,7 @@ Speaking of cost, If you've been clicking on the links above you've noticed that
 
 We are missing just two things that I assume pretty much everyone has lying around the house in our modern era. A micro USB cable and a power supply. I've just used on of the multitude of cables and power supplies that I have lying around from old phones and kindles and other devices. Do just make sure that it's a 5V power supply. Anywhere from 1 to 2.5 Amps seems to be fine. 
 
-Getting both the RaspberryPi and the AWS Lambda Function/Layers set up is fairly involved and is well documented elsewhere. If you're really interested in my setup, feel free to contact me and I can give you a tutorial! The first step is buying all the right gear for the RaspberryPi! 
+
 
 ## License
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) 
