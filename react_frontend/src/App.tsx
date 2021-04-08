@@ -8,6 +8,8 @@ import {
   RefreshContent,
 } from "react-js-pull-to-refresh";
 
+const BACKEND_API = process.env.REACT_APP_BACKEND_API || ""
+
 interface DataType {
   0: string[];
   1: number[];
@@ -34,7 +36,7 @@ export interface TempHeaderType {
 function App() {
   async function getTemps(): Promise<void> {
     let res = await fetch(
-      `https://cq661ei9wa.execute-api.us-west-2.amazonaws.com/authFree/helloWorld`,
+      BACKEND_API,
       {
         method: "GET",
       }

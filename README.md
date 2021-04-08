@@ -44,6 +44,8 @@ We are missing just two things that I assume pretty much everyone has lying arou
 
 Next step, stick it all together!
 
+### RaspberryPi setup:
+
 For this step just follow the instructions provided with the equipment that you've purchased. If you've purchased the hammer header above, you may consider trimming it down so that you're only installing the pins that you need. It makes for a less bulky setup and you can always save those pins for later. 
 
 Now that you have your temperature sensor connected to your RaspberryPi it's time to get everything up and running! 
@@ -61,11 +63,11 @@ network={
 }
 ```
 
-Great, now we should be good to go! Plug your Pi into power, give it a minute or two to boot up and then try the following commands in your terminal.
-(Quick note: If you are on Windows there are some other steps you may need to do first... The RaspberryPi Docs can help you out [here](https://www.raspberrypi.org/documentation/remote-access/ssh/))
+Great, now we should be good to go! Plug your Pi into power, give it a minute or two to boot up. Meanwhile, we need to find out the IP address of our Pi. There are multiple ways to do this, depending on your local environment. Check out the [RaspberryPi IP Address Docs](https://www.raspberrypi.org/documentation/remote-access/ip-address.md) to see how you can do that. 
+(Quick note: If you are on Windows there are some other steps you may need to do as well... The [RaspberryPi Docs](https://www.raspberrypi.org/documentation/remote-access/ssh/) can help you out )
 
-`ssh-keygen -R raspberrypi.local`
-`ssh pi@raspberrypi.local`
+Once you have the RaspberryPi's IP, run this command, pasting in the IP Address.
+`ssh pi@<Your IP Address>`
 
 The second command should prompt you for a password (the default is "raspberry"), enter that and you're in!
 
@@ -89,13 +91,73 @@ Now, `cd cozy-baby/raspberry_pi`, then `pipenv install`. This will install all n
 DB_URI = <Your MongoDB URI>
 LATITUDE = <Your Latitude>
 LONGITUDE = <Your Longitude>
+APP_ID = <Your OpenWeather API Key>
 ```
 
 Oh wait! What's that MongoDB URI about? We're going to need to create a MongoDB instance in order to store our data. Let's jump back into our development computer and get that going. It will just take a minute, and then we'll have that DB_URI that our script needs. We can host it for free on MongoDB Atlas. Follow this link for their tutorial to get setup https://docs.atlas.mongodb.com/getting-started/. Once you have your connection string, bring that back here and paste it into the ".env" as your DB_URI.
 
-Now we need to bring in cron. Cron enables us to run jobs on a schedule, often used for dev-ops purposes. We're going to use it to call our "log_temperatures.py" script every hour. If you'd like more granular data, I'll show you how to tell cron to call this script at any interval you'd like.
+We also need to generate an API key for OpenWeather. This is what allows us to get the outside temperature without setting up our own sensor outside. We'll just ask OpenWeather what the temperature is at our Latitude and Longitude. Make an account [here](https://home.openweathermap.org/users/sign_up) and then generate an API Key for the "onecall" endpoint. Bring that key back here and add it to the ".env" file.
 
-To be continued....
+Now we need to bring in Cron. Cron enables us to run jobs on a schedule on Unix/Linux machines, often used for dev-ops purposes. We're going to use it to call our "log_temperatures.py" script every hour. If you'd like more granular data, that's easy as well. [Here](https://www.raspberrypi.org/documentation/linux/usage/cron.md) is a great resource on how the scheduling syntax works. For our purposes we'll just run `crontab -e` and add the following line:
+```0 * * * *  /cozy-baby/raspberry_pi/log_temperatures.py```
+
+It may ask you to select an editor to open, I like nano.
+
+Change the path to the file if you've cloned the repo anywhere but the root of your Pi. 
+
+This line just tells cron to run our script at the "0" minute of every hour of every day of every week of every month. If you'd like to run it every minute, change that first "0" to a "*". Write "*/5" to run every 5 minutes. [CrontabGuru](https://crontab.guru/) is a great place to play around with different settings for your crontab.
+
+One final step, and we'll be all set up as far as the RaspberryPi is concerned. 
+We need to activate i2c on our Pi so that it can read the data from our AdaFruit sensor. Raspian's `sudo raspiconfig` command makes this easy. Follow the screenshots [here](https://www.raspberrypi-spy.co.uk/2014/11/enabling-the-i2c-interface-on-the-raspberry-pi/#:~:text=Method%201%20%E2%80%93%20Using%20%E2%80%9CRaspi%2Dconfig%E2%80%9D%20on%20Command%20Line&text=Highlight%20the%20%E2%80%9CI2C%E2%80%9D%20option%20and,activate%20%E2%80%9C%E2%80%9D.&text=The%20Raspberry%20Pi%20will%20reboot%20and%20the%20interface%20will%20be%20enabled.) for an easy walk-through.
+
+Ok! Done with the RaspberryPi. Assuming we did everything correctly, we should start seeing values come into our MongoDB that we created earlier. Jump over to your Atlas account to confirm that the values are flowing. If you're only uploading every hour, you may have to wait a while. Maybe a good idea to reduce that interval in your crontab for testing purposes.
+
+Next we'll set up our AWS Lambda function. Clone the repo again using the `git clone` command above, but this time on your main computer. You can definitely do this all from your Pi as well, but then you have to ssh into the Pi to do anything, which is a bit of a pain, at least for my setup.
+
+
+### AWS Lamda:
+First, we'll need to create an account. Go to https://aws.amazon.com/ and Click "Create and AWS Account" or "Sign in to the Console," whichever one you see. Follow the instructions to create an account. 
+
+Once you're in, search in the top search bar for "lambda" and hit "enter." 
+
+Then, at the top left click "Create a function." 
+
+Select "Author from scratch," give your function a name (cozyBaby, maybe? :) ), and select "Python 3.7" as the runtime. Then click "Create Function."
+
+Once the code editor opens, click "Upload from" and select ".zip." Navigate to `Cozy-Baby/aws_lambda` and select `lambda-deployment-package.zip`. 
+
+You'll see that this function also needs that MongoDB connection string in order to access our database. Go find that, and bring it back here. Find the "Configuration" tab, then select "Environment Variables." Add an environment variable named "DB_URI" at set the value to your connection string and save.
+
+So, now our function is up there in the AWS clouds, but we have no way to access it. We need to set up an API trigger. Toward the top of the page, click "Add Trigger." Select "API Gateway" and below select "Create an API." Leave the type as HTTP. Under Security select "Open," then expand "Additional Settings" and enable Cross Origin Resource Sharing (CORS). This will enable us to hit this API endpoint from our frontend. We're obviously leaving everything pretty open security-wise, but I don't consider the temperature of my home to be very sensitive data, so I'm not too worried. 
+
+Once the trigger is created it will appear in our "Triggers." Expand the details on our trigger and click on the "API Endpoint" to do a quick test. If you get back a list of time and temperatures in JSON format then it's working. Copy that API Endpoint address and hold onto it. We're going to need it in a minute.
+
+Our serverless function is now working and retrieves data from our database. Now we just need to get our frontend up and running so we have a nice way to view our data.
+
+
+### Netlify:
+Netlify is a nice easy, free way to deploy simple applications. They also have their own serverless functions that are worth looking into. At the time of writing this, they did not support Python serverless functions, so I went my own way. 
+
+First off, make an account at https://www.netlify.com/.
+
+Once you've done that, we're going to install the netlify cli to make things easy.
+
+Run: `npm install netlify-cli -g`
+
+Then, cd into the `react_frontend` directory and run `npm i`
+
+Next, run `REACT_APP_BACKEND_API=<Your AWS API Endpoint> npm run build` inserting the API Endpoint that we copied above.
+
+and `npm run build`
+
+Finally, run: `netlify deploy --dir=./` This will open a browser window for you authenticate with your brand new netlify account. Once you've authenticated, close the window and come back to your terminal. Following the prompts, select "Create & configure a new site". Select your team (You will likely only have one choice here) and give your site a name. This will become part of the url for your app, so make it something easy to remember.
+
+Netlify will now give you a Website Draft URL. Click that to make sure that everything is looking good. If it is, run `netlify deploy --prod` to deploy it for real. Make note of the url that it gives you because that is how you'll access your site. 
+
+That's it! Enjoy knowing what the temperature is whereever you choose to place your sensor!
+
+Remember, this is a progessive web app, so feel free to install it on all of your devices for quicker access.
+
 
 ## License
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) 
