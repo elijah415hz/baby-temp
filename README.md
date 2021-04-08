@@ -52,12 +52,12 @@ For this step just follow the instructions provided with the equipment that you'
 
 Now that you have your temperature sensor connected to your RaspberryPi it's time to get everything up and running! 
 
-I use a headless setup, meaning that I don't plug a keyboard and moniter into my RaspberryPi, I just access it from my MacBook. One way to do this is through SSH. SSH is disabled by default in Raspian, the RaspberryPi operating system. To enable it, plug your sd card into your computer and create an empty file named "ssh" (no file extension) right at the root of the boot partition. If you have multiple partitions, the boot partitian should be the smallest partition and you'll see it contains key operating system files. While we're in there, we can go ahead and set up our wireless credentials. Raspian has a very user friendly utility for configuring wifi credentials and other basic things that can be accessed with the command raspiconfig, but we don't have access to that utility until we can ssh into our Pi. So, we'll do it the manual way just this once. 
+I use a headless setup, meaning that I don't plug a keyboard and moniter into my RaspberryPi, I just access it from my MacBook. One way to do this is through SSH. SSH is disabled by default in Raspian, the RaspberryPi operating system. To enable it, plug your sd card into your computer and create an empty file named "ssh" (no file extension) right at the root of the boot partition. If you have multiple partitions, the boot partitian should be the smallest partition and you'll see it contains key operating system files. While we're in there, we can go ahead and set up our wireless credentials. Raspian has a very user friendly utility for configuring wifi credentials and other basic things that can be accessed with the command ` sudo raspiconfig`, but we don't have access to that utility until we can SSH into our Pi. So, we'll do it the manual way just this once. 
 Right in the same folder where we created the ssh file, create a file called "wpa_supplicant" and paste the following code into it, filling in your own information.
 
 ```ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
-country=<Insert 2 letter ISO 3166-1 country code here> (US, for example)
+country=<Insert 2 letter ISO 3166-1 country code here (US, for example)> 
 
 network={
  ssid="<Name of your wireless LAN>"
@@ -94,11 +94,13 @@ LONGITUDE = <Your Longitude>
 APP_ID = <Your OpenWeather API Key>
 ```
 
-Oh wait! What's that MongoDB URI about? We're going to need to create a MongoDB instance in order to store our data. Let's jump back into our development computer and get that going. It will just take a minute, and then we'll have that DB_URI that our script needs. We can host it for free on MongoDB Atlas. Follow this link for their tutorial to get setup https://docs.atlas.mongodb.com/getting-started/. Once you have your connection string, bring that back here and paste it into the ".env" as your DB_URI.
+Oh wait! What's that MongoDB URI about? We're going to need to create a MongoDB instance in order to store our data. Let's jump back into our development computer and get that going. It will just take a minute, and then we'll have that DB_URI that our script needs. We can host it for free on MongoDB Atlas. Follow this link for their tutorial to get setup https://docs.atlas.mongodb.com/getting-started/. Once you've created a collection and have your connection string, bring that back here and paste it into the ".env" as your DB_URI.
 
 We also need to generate an API key for OpenWeather. This is what allows us to get the outside temperature without setting up our own sensor outside. We'll just ask OpenWeather what the temperature is at our Latitude and Longitude. Make an account [here](https://home.openweathermap.org/users/sign_up) and then generate an API Key for the "onecall" endpoint. Bring that key back here and add it to the ".env" file.
 
-Now we need to bring in Cron. Cron enables us to run jobs on a schedule on Unix/Linux machines, often used for dev-ops purposes. We're going to use it to call our "log_temperatures.py" script every hour. If you'd like more granular data, that's easy as well. [Here](https://www.raspberrypi.org/documentation/linux/usage/cron.md) is a great resource on how the scheduling syntax works. For our purposes we'll just run `crontab -e` and add the following line:
+If you don't happen know your Latitude and Longitude offhand https://www.latlong.net/ can help.
+
+Now we need to bring in Cron. Cron enables us to run jobs on a schedule on Unix/Linux machines, often used for dev-ops purposes. We're going to use it to call our "log_temperatures.py" script every hour. If you'd like more granular data, that's easy as well. For our purposes we'll just run `crontab -e` and add the following line:
 ```0 * * * *  /cozy-baby/raspberry_pi/log_temperatures.py```
 
 It may ask you to select an editor to open, I like nano.
