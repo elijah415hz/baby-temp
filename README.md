@@ -29,7 +29,9 @@ CozyBaby is built with Python, MongoDB, React, Typescript, ChartJS, and AWS Lamb
 
 ## Installation
 Most of the work of getting this app working was in the setup of the Raspberry Pi and the AWS Lambda. Having successfully fumbled my way through it, hopefully the following description can help anyone hoping to replicate this app locally, or set up something similar.
-First step - Acquiring the materials:
+
+### First step - Acquiring the materials:
+
 I purchased everything from AdaFruit because I've had good results from them before, but there are many other great vendors as well.
 1. [Raspberry Pi Zero W](https://www.adafruit.com/product/3400). I don't need much processing power, so I decided to keep things small and cheap with the Pi Zero. The W model has a built in WiFi card, which makes connecting to your wireless network a breeze.
 2. [MicroSD card](https://www.adafruit.com/product/2820). I didn't have a spare one lying around, so I bought one with Raspbian Buster Lite pre-flashed. It's not so much trouble to flash your own image, but since I had to buy a card anyway, why not save myself a step!
@@ -40,11 +42,11 @@ I purchased everything from AdaFruit because I've had good results from them bef
 
 Speaking of cost, If you've been clicking on the links above you've noticed that this is not an expensive setup. I think all told my final bill was around $40. Amazing! 
 
-We are missing just two things that I assume pretty much everyone has lying around the house in our modern era. A micro USB cable and a power supply. I've just used on of the multitude of cables and power supplies that I have lying around from old phones and kindles and other devices. Do just make sure that it's a 5V power supply. Anywhere from 1 to 2.5 Amps seems to be fine. 
+We are missing just two things that I assume pretty much everyone has lying around the house in our modern era. A micro USB cable and a power supply. I just used one of the multitude of cables and power supplies that I have lying around from old phones and kindles and other devices. Do just make sure that it's a 5V power supply. Anywhere from 1 to 2.5 Amps seems to be fine. 
 
 Next step, stick it all together!
 
-### RaspberryPi setup:
+### RaspberryPi setup: <img src="raspberry-pi-icon.webp" width="40"/>
 
 For this step just follow the instructions provided with the equipment that you've purchased. If you've purchased the hammer header above, you may consider trimming it down so that you're only installing the pins that you need. It makes for a less bulky setup and you can always save those pins for later. 
 
@@ -73,15 +75,13 @@ The second command should prompt you for a password (the default is "raspberry")
 
 Now to get the code!
 
-First install git with:
-`sudo apt-get update`
-`sudo apt-get install git`
+First install git with: `sudo apt-get update`, `sudo apt-get install git`
 
 Then clone this repo with `git clone https://github.com/elijah415hz/cozy-baby.git` 
 
 This will prompt you for your github username and password.
 
-(This is the http link, which is deprecated. But as long as it still works is perfect for this kind of thing. Do I want to go through setting up an ssh key just to clone this one repo? Not really... If you'd like to go the ssh key route, here is the info on how to do that. [Feel free!](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent))
+(This is the http link, which is deprecated. But as long as it still works it is perfect for this kind of thing. Do I want to go through setting up an ssh key just to clone this one repo? Not really... If you'd like to go the ssh key route, here is the info on how to do get that set up. [Feel free!](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent))
 
 Almost there.
 
@@ -112,10 +112,10 @@ We need to activate i2c on our Pi so that it can read the data from our AdaFruit
 
 Ok! Done with the RaspberryPi. Assuming we did everything correctly, we should start seeing values come into our MongoDB that we created earlier. Jump over to your Atlas account to confirm that the values are flowing. If you're only uploading every hour, you may have to wait a while. Maybe a good idea to reduce that interval in your crontab for testing purposes.
 
-Next we'll set up our AWS Lambda function. Clone the repo again using the `git clone` command above, but this time on your main computer. You can definitely do this all from your Pi as well, but then you have to ssh into the Pi to do anything, which is a bit of a pain, at least for my setup.
+Next we'll set up our AWS Lambda function. Clone the repo again using the `git clone` command above, but this time on your main computer. If you're not running headless on your RaspberryPi and have access to the GUI, you can skip this step. Otherwise, this will just make your life much much easier than trying to get files off of your headless Pi.
 
 
-### AWS Lamda:
+### AWS Lamda: <img src="lambda-icon.png" width="40"/>
 First, we'll need to create an account. Go to https://aws.amazon.com/ and Click "Create and AWS Account" or "Sign in to the Console," whichever one you see. Follow the instructions to create an account. 
 
 Once you're in, search in the top search bar for "lambda" and hit "enter." 
@@ -135,7 +135,7 @@ Once the trigger is created it will appear in our "Triggers." Expand the details
 Our serverless function is now working and retrieves data from our database. Now we just need to get our frontend up and running so we have a nice way to view our data.
 
 
-### Netlify:
+### Netlify: <img src="netlify-icon.png" width="40"/>
 Netlify is a nice easy, free way to deploy simple applications. They also have their own serverless functions that are worth looking into. At the time of writing this, they did not support Python serverless functions, so I went my own way. 
 
 First off, make an account at https://www.netlify.com/.
