@@ -52,7 +52,7 @@ For this step just follow the instructions provided with the equipment that you'
 
 Now that you have your temperature sensor connected to your RaspberryPi it's time to get everything up and running! 
 
-I use a headless setup, meaning that I don't plug a keyboard and moniter into my RaspberryPi, I just access it from my MacBook. One way to do this is through SSH. SSH is disabled by default in Raspian, the RaspberryPi operating system. To enable it, plug your sd card into your computer and create an empty file named "ssh" (no file extension) right at the root of the boot partition. If you have multiple partitions, the boot partitian should be the smallest partition and you'll see it contains key operating system files. While we're in there, we can go ahead and set up our wireless credentials. Raspian has a very user friendly utility for configuring wifi credentials and other basic things that can be accessed with the command ` sudo raspiconfig`, but we don't have access to that utility until we can SSH into our Pi. So, we'll do it the manual way just this once. 
+I use a headless setup, meaning that I don't plug a keyboard and monitor into my RaspberryPi, I just access it from my MacBook. One way to do this is through SSH. SSH is disabled by default in Raspian, the RaspberryPi operating system. To enable it, plug your sd card into your computer and create an empty file named "ssh" (no file extension) right at the root of the boot partition. If you have multiple partitions, the boot partition should be the smallest partition and you'll see it contains key operating system files. While we're in there, we can go ahead and set up our wireless credentials. Raspian has a very user friendly utility for configuring WiFi credentials and other basic things that can be accessed with the command `sudo raspi-config`, but we don't have access to that utility until we can SSH into our Pi. So, we'll do it the manual way just this once. 
 Right in the same folder where we created the ssh file, create a file called "wpa_supplicant" and paste the following code into it, filling in your own information.
 
 ```ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -81,7 +81,7 @@ Then clone this repo with `git clone https://github.com/elijah415hz/cozy-baby.gi
 
 This will prompt you for your github username and password.
 
-(This is the http link, which is deprecated. But as long as it still works it is perfect for this kind of thing. Do I want to go through setting up an ssh key just to clone this one repo? Not really... If you'd like to go the ssh key route, here is the info on how to do get that set up. [Feel free!](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent))
+(This is the http link, which is deprecated. But as long as it still works it is perfect for this kind of thing. Do I want to go through setting up an ssh key just to clone this one repo? Not really... If you'd like to go the ssh key route, here is the info on how to get that set up. [Feel free!](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent))
 
 Almost there.
 
@@ -110,7 +110,7 @@ Change the path to the file if you've cloned the repo anywhere but the root of y
 This line just tells cron to run our script at the "0" minute of every hour of every day of every week of every month. If you'd like to run it every minute, change that first "0" to a "*". Write "*/5" to run every 5 minutes. [CrontabGuru](https://crontab.guru/) is a great place to play around with different settings for your crontab.
 
 One final step, and we'll be all set up as far as the RaspberryPi is concerned. 
-We need to activate i2c on our Pi so that it can read the data from our AdaFruit sensor. Raspian's `sudo raspiconfig` command makes this easy. Follow the screenshots [here](https://www.raspberrypi-spy.co.uk/2014/11/enabling-the-i2c-interface-on-the-raspberry-pi/#:~:text=Method%201%20%E2%80%93%20Using%20%E2%80%9CRaspi%2Dconfig%E2%80%9D%20on%20Command%20Line&text=Highlight%20the%20%E2%80%9CI2C%E2%80%9D%20option%20and,activate%20%E2%80%9C%E2%80%9D.&text=The%20Raspberry%20Pi%20will%20reboot%20and%20the%20interface%20will%20be%20enabled.) for an easy walk-through.
+We need to activate i2c on our Pi so that it can read the data from our AdaFruit sensor. Raspian's `sudo raspi-config` command makes this easy. Follow the screenshots [here](https://www.raspberrypi-spy.co.uk/2014/11/enabling-the-i2c-interface-on-the-raspberry-pi/#:~:text=Method%201%20%E2%80%93%20Using%20%E2%80%9CRaspi%2Dconfig%E2%80%9D%20on%20Command%20Line&text=Highlight%20the%20%E2%80%9CI2C%E2%80%9D%20option%20and,activate%20%E2%80%9C%E2%80%9D.&text=The%20Raspberry%20Pi%20will%20reboot%20and%20the%20interface%20will%20be%20enabled.) for an easy walk-through.
 
 Ok! Done with the RaspberryPi. Assuming we did everything correctly, we should start seeing values come into our MongoDB that we created earlier. Jump over to your Atlas account to confirm that the values are flowing. If you're only uploading every hour, you may have to wait a while. Maybe a good idea to reduce that interval in your crontab for testing purposes.
 
@@ -128,7 +128,7 @@ Select "Author from scratch," give your function a name (cozyBaby, maybe? :) ), 
 
 Once the code editor opens, click "Upload from" and select ".zip." Navigate to `Cozy-Baby/aws_lambda` and select `lambda-deployment-package.zip`. 
 
-You'll see that this function also needs that MongoDB connection string in order to access our database. Go find that, and bring it back here. Find the "Configuration" tab, then select "Environment Variables." Add an environment variable named "DB_URI" at set the value to your connection string and save.
+You'll see that this function also needs that MongoDB connection string in order to access our database. Go find that, and bring it back here. Find the "Configuration" tab, then select "Environment Variables." Add an environment variable named "DB_URI" and set the value to your connection string and save.
 
 So, now our function is up there in the AWS clouds, but we have no way to access it. We need to set up an API trigger. Toward the top of the page, click "Add Trigger." Select "API Gateway" and below select "Create an API." Leave the type as HTTP. Under Security select "Open," then expand "Additional Settings" and enable Cross Origin Resource Sharing (CORS). This will enable us to hit this API endpoint from our frontend. We're obviously leaving everything pretty open security-wise, but I don't consider the temperature of my home to be very sensitive data, so I'm not too worried. 
 
@@ -152,13 +152,13 @@ Next, run `REACT_APP_BACKEND_API=<Your AWS API Endpoint> npm run build` insertin
 
 and `npm run build`
 
-Finally, run: `netlify deploy --dir=./` This will open a browser window for you authenticate with your brand new netlify account. Once you've authenticated, close the window and come back to your terminal. Following the prompts, select "Create & configure a new site". Select your team (You will likely only have one choice here) and give your site a name. This will become part of the url for your app, so make it something easy to remember.
+Finally, run: `netlify deploy --dir=./` This will open a browser window for you to authenticate with your brand new netlify account. Once you've authenticated, close the window and come back to your terminal. Following the prompts, select "Create & configure a new site". Select your team (You will likely only have one choice here) and give your site a name. This will become part of the url for your app, so make it something easy to remember.
 
 Netlify will now give you a Website Draft URL. Click that to make sure that everything is looking good. If it is, run `netlify deploy --prod` to deploy it for real. Make note of the url that it gives you because that is how you'll access your site. 
 
-That's it! Enjoy knowing what the temperature is whereever you choose to place your sensor!
+That's it! Enjoy knowing what the temperature is where ever you choose to place your sensor!
 
-Remember, this is a progessive web app, so feel free to install it on all of your devices for quicker access.
+This is a progressive web app, so feel free to install it on all of your devices for quicker access.
 
 
 ## License
