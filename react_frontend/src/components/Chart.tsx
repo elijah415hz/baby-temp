@@ -16,12 +16,16 @@ export default function MyChart({ data }: { data: ChartJSDataType }) {
                             fontColor: "#455a64"
                         },
                         gridLines: {
-                            color: "#37474f"
+                            color: "#37474f",
+                            zeroLineColor: "#37474f"
                         }
                     }],
                     yAxes: [{
                         ticks: {
-                            fontColor: "#455a64"
+                            fontColor: "#455a64",
+                            callback: function (value: number | string): string {
+                                return value + "°"
+                            }
                         },
                         gridLines: {
                             color: "#37474f"
